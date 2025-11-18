@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rehab RP — Новости и события</title>
+<style>
+  /* ---------- Общая стилистика (rehab RP: тёмно, неон) ---------- */
+  :root{
+    --bg:#0b0d10;
+    --panel:#0f1114;
+    --muted:#9aa1a6;
+    --accent:#00e6a8;
+    --accent-2:#7b61ff;
+    --danger:#ff4d6d;
+    --glass: rgba(255,255,255,0.03);
+    --radius:12px;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(800px 400px at 10% 20%, rgba(123,97,255,0.06), transparent 8%),
+      radial-gradient(600px 300px at 90% 80%, rgba(0,230,168,0.04), transparent 10%),
+      var(--bg);
+    color:#e6eef1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-bottom:60px;
+  }
+
+  header.site-header{
+    position:sticky;
+    top:0;
+    z-index:30;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:14px 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-bottom:1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(6px);
+  }
+  .brand a{ text-decoration:none; color:var(--accent); font-weight:700; font-size:20px; letter-spacing:0.6px;}
+  .brand span{ color:var(--accent-2); margin-left:6px; }
+
+  nav a{
+    color:var(--muted);
+    text-decoration:none;
+    margin-left:14px;
+    font-size:14px;
+  }
+  nav a.cta{
+    padding:8px 12px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#031018;
+    border-radius:10px;
+    font-weight:600;
+  }
+
+  .container{
+    max-width:1100px;
+    margin:28px auto;
+    padding:0 20px;
+  }
+
+  .hero{
+    display:flex;
+    align-items:flex-start;
+    gap:24px;
+    margin-bottom:18px;
+  }
+  .hero .left{
+    flex:1;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  h1{ margin:0 0 6px 0; font-size:28px; color:#fff;}
+  .lead{ color:var(--muted); margin:0 0 12px 0; }
+
+  .right-panel{
+    width:320px;
+    min-width:240px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--radius);
+    padding:14px;
+    border:1px solid rgba(255,255,255,0.02);
+    height:fit-content;
+  }
+  .small{font-size:13px; color:var(--muted); margin-bottom:10px;}
+
+  /* cards/posts */
+  .posts{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:18px; }
+  @media (max-width:880px){ .posts{ grid-template-columns: 1fr; } .right-panel{ display:none; } .hero{ flex-direction:column; } }
+  article.card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border-radius:12px;
+    padding:16px;
+    border:1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  }
+  article.card h2{ margin:0 0 6px 0; font-size:18px; color:#fff; }
+  article.card h2 a{ color:inherit; text-decoration:none; }
+  .meta{ font-size:13px; color:var(--muted); margin-bottom:10px;}
+  .preview{ color:#d9eef0; margin-bottom:10px; line-height:1.45; max-height:6.4em; overflow:hidden; }
+  .card-actions{ display:flex; gap:10px; align-items:center; }
+  .btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    padding:8px 12px;
+    border-radius:8px;
+    color:var(--muted);
+    cursor:pointer;
+    text-decoration:none;
+    font-size:13px;
+  }
+  .btn.primary{
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#031018;
+    border:none;
+    font-weight:700;
+  }
+  .muted{ color:var(--muted); font-size:13px; }
+
+  /* forms */
+  .auth-box, .editor {
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    padding:14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  label{ display:block; margin-bottom:10px; font-size:13px; color:var(--muted); }
+  input[type=text], input[type=password], textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:var(--glass);
+    color:#e6eef1;
+    resize:vertical;
+    font-size:14px;
+  }
+  textarea{ min-height:140px; max-height:360px; }
+
+  .row{ display:flex; gap:10px; }
+  .row .col{ flex:1; }
+
+  .msg{ padding:8px 10px; border-radius:8px; margin-bottom:10px; font-size:14px; }
+  .msg.error{ background: rgba(255,77,109,0.08); color:var(--danger); border:1px solid rgba(255,77,109,0.12); }
+  .msg.ok{ background: rgba(0,230,168,0.06); color:var(--accent); border:1px solid rgba(0,230,168,0.08); }
+
+  footer.site-footer{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.7));
+    color:var(--muted);
+    padding:10px 20px;
+    font-size:13px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .profile-mini{ display:flex; align-items:center; gap:10px; }
+  .avatar{
+    width:46px; height:46px; border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex; align-items:center; justify-content:center; font-weight:700; color:#031018;
+  }
+
+  /* post page */
+  .post-page{ background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.02); }
+  .post-content img{ max-width:100%; border-radius:8px; }
+
+  .controls{ display:flex; gap:8px; align-items:center; margin-top:12px; }
+
+  .danger{ background:transparent; border:1px solid rgba(255,77,109,0.14); color:var(--danger); }
+
+  /* tiny helpers */
+  .flex{ display:flex; align-items:center; gap:10px;}
+  .spacer{ flex:1; }
+  a.link{ color:var(--muted); text-decoration:underline; font-size:13px; }
+
+  /* nice transitions */
+  *{ transition: all 160ms cubic-bezier(.2,.8,.2,1); }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <a href="#" onclick="navTo('home');return false">Rehab <span>RP</span></a>
+    </div>
+    <nav>
+      <a href="#" onclick="navTo('home');return false">Главная</a>
+      <a href="#" id="newBtn" class="cta" onclick="openEditor();return false">+ Новость</a>
+      <span id="navAuth"></span>
+    </nav>
+  </header>
+
+  <main class="container" id="app">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="left">
+        <h1>Новости и события Rehab RP</h1>
+        <p class="lead">Создавай анонсы, публикуй события и делись важным. Всё в стиле тёмного рехаба — минимализм, неон и мрачная эстетика.</p>
+
+        <!-- content area will be injected here -->
+        <div id="content"></div>
+      </div>
+
+      <aside class="right-panel">
+        <div id="userBox" class="profile-box">
+          <!-- profile / auth controls injected here -->
+        </div>
+
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.02);margin:12px 0;" />
+
+        <div class="small">Поиск</div>
+        <input id="searchInput" type="text" placeholder="Искать заголовки или авторов" oninput="renderPosts();" />
+
+        <div style="height:12px;"></div>
+
+        <div class="small">Фильтр</div>
+        <select id="filterAuthor" onchange="renderPosts();">
+          <option value="">Все авторы</option>
+        </select>
+
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">© Rehab RP — Площадка для новостей и событий</footer>
+
+<!-- ---------- Templates (hidden) ---------- -->
+<template id="postsView">
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="margin:0;color:#fff;">Последние публикации</h3>
+      <div class="muted" id="postsCount"></div>
+    </div>
+    <section class="posts" id="postsGrid"></section>
+  </div>
+</template>
+
+<template id="postPage">
+  <div class="post-page">
+    <div style="display:flex;gap:12px;align-items:flex-start;">
+      <div class="avatar" id="postAvatar">A</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <h2 id="postTitle" style="margin:0;color:#fff;"></h2>
+          <div class="spacer"></div>
+          <div class="muted" id="postTime"></div>
+        </div>
+        <div class="meta" id="postMeta"></div>
+      </div>
+    </div>
+
+    <div style="height:12px;"></div>
+    <div class="post-content" id="postContent" style="color:#dff8f0;"></div>
+
+    <div class="controls" id="postControls"></div>
+  </div>
+</template>
+
+<template id="authBox">
+  <div class="auth-box" id="authBoxInner">
+    <div id="authInner"></div>
+  </div>
+</template>
+
+<template id="editorTemplate">
+  <div class="editor">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <strong id="editorTitle">Новая публикация</strong>
+      <div class="muted">Markdown поддерживается (основные теги)</div>
+    </div>
+
+    <label>Заголовок<input id="postTitleInput" type="text" placeholder="Коротко и выразительно" /></label>
+    <label>Контент<textarea id="postContentInput" placeholder="Текст новости, описание события, дата/место..."></textarea></label>
+
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn primary" id="savePostBtn">Опубликовать</button>
+      <button class="btn" onclick="closeEditor();return false">Отмена</button>
+      <div class="spacer"></div>
+      <div class="muted" id="editorMsg"></div>
+    </div>
+  </div>
+</template>
+
+<!-- ---------- Scripts ---------- -->
+<script>
+/*
+  Single-file SPA implementing:
+  - localStorage-based users (with SHA-256 hashed passwords)
+  - posts stored in localStorage, with author username and timestamps
+  - create/edit/delete posts (only author can edit/delete)
+  - profiles (view author's posts)
+  - search/filter
+  - simple markdown -> HTML renderer
+*/
+
+/* ---------- Utilities ---------- */
+function uid(){ return 'id-' + Math.random().toString(36).slice(2,11); }
+function nowISO(){ return new Date().toISOString(); }
+function fmtShort(iso){
+  const d = new Date(iso);
+  return d.toLocaleString();
+}
+
+/* SHA-256 hashing for password (returns hex string) */
+async function hashStr(str){
+  const enc = new TextEncoder();
+  const data = enc.encode(str);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  const arr = Array.from(new Uint8Array(digest));
+  return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* simple markdown parser: headings, bold, italic, links, code, lists, paragraphs, line breaks */
+function mdToHtml(md){
+  if(!md) return '';
+  // escape HTML
+  let out = md
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+
+  // code blocks ``` ```
+  out = out.replace(/```([\s\S]*?)```/g, (m, p1) => '<pre style="background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;overflow:auto;">' + p1.replace(/</g,'&lt;') + '</pre>');
+
+  // inline code
+  out = out.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.02);padding:2px 6px;border-radius:6px;">$1</code>');
+
+  // headings
+  out = out.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
+  out = out.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
+  out = out.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+  out = out.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  out = out.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  out = out.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+  // bold/italic
+  out = out.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/\*([^\*]+)\*/g, '<em>$1</em>');
+
+  // links [text](url)
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer noopener">$1</a>');
+
+  // unordered lists
+  out = out.replace(/(^|\n)[\-\*] (.+)/g, (m, p1, p2) => `${p1}<li>${p2}</li>`);
+  out = out.replace(/(<li>[\s\S]+?<\/li>)/g, (m) => '<ul>' + m + '</ul>');
+
+  // paragraphs & line breaks
+  out = out.split(/\n{2,}/).map(para => {
+    if(para.match(/^<\/?(h|pre|ul|ol|li|blockquote|h1|h2|h3|h4|h5|h6)/)) return para;
+    return '<p>' + para.replace(/\n/g,'<br>') + '</p>';
+  }).join('');
+
+  return out;
+}
+
+/* ---------- Storage helpers ---------- */
+const STORAGE_USERS = 'rehab_users_v1';
+const STORAGE_POSTS = 'rehab_posts_v1';
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(STORAGE_USERS) || '[]'); }catch(e){ return []; } }
+function saveUsers(u){ localStorage.setItem(STORAGE_USERS, JSON.stringify(u)); }
+function loadPosts(){ try{ return JSON.parse(localStorage.getItem(STORAGE_POSTS) || '[]'); }catch(e){ return []; } }
+function savePosts(p){ localStorage.setItem(STORAGE_POSTS, JSON.stringify(p)); }
+
+/* ---------- Auth state ---------- */
+function currentUser(){
+  const un = localStorage.getItem('rehab_current_user');
+  if(!un) return null;
+  const users = loadUsers();
+  return users.find(u => u.username === un) || null;
+}
+function setCurrentUser(username){
+  if(username) localStorage.setItem('rehab_current_user', username);
+  else localStorage.removeItem('rehab_current_user');
+  renderNavAuth();
+  renderUserBox();
+  renderPosts();
+}
+
+/* ---------- Init demo if empty ---------- */
+(function seedDemo(){
+  if(loadUsers().length === 0){
+    // create a demo user: admin / password 'rehab123' (hashed)
+    (async ()=>{
+      const pass = await hashStr('rehab123');
+      const users = [{ id: uid(), username:'admin', displayName:'RehabAdmin', passwordHash:pass, bio:'Администратор сообщества', createdAt: nowISO() }];
+      saveUsers(users);
+      savePosts([
+        { id: uid(), title:'Добро пожаловать в Rehab RP', content:'Первое сообщение. Используйте кнопку **+ Новость** чтобы опубликовать своё событие.\n\n- Начало: завтра\n- Место: клуб «Подвал»', author:'admin', createdAt: nowISO(), updatedAt:null }
+      ]);
+      // don't auto-login
+      renderAll();
+    })();
+  } else {
+    renderAll();
+  }
+})();
+
+/* ---------- Renderers / Navigation ---------- */
+
+function renderAll(){ renderNavAuth(); renderUserBox(); renderPosts(); populateAuthorFilter(); }
+
+function renderNavAuth(){
+  const span = document.getElementById('navAuth');
+  const cur = currentUser();
+  if(!cur){
+    span.innerHTML = `<a href="#" onclick="openAuth('login');return false">Войти</a><a href="#" style="margin-left:10px" onclick="openAuth('register');return false">Регистрация</a>`;
+  } else {
+    span.innerHTML = `<a href="#" onclick="navTo('profile','${cur.username}');return false">${escapeHtml(cur.displayName||cur.username)}</a><a href="#" style="margin-left:10px" onclick="logout();return false">Выйти</a>`;
+  }
+}
+
+function renderUserBox(){
+  const box = document.getElementById('userBox');
+  const cur = currentUser();
+  if(!cur){
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="avatar">R</div>
+        <div>
+          <div style="font-weight:700;color:#fff;">Гость</div>
+          <div class="small">Войдите, чтобы публиковать и редактировать свои записи</div>
+        </div>
+      </div>
+      <div style="height:12px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="openAuth('login')">Войти</button>
+        <button class="btn primary" onclick="openAuth('register')">Создать аккаунт</button>
+      </div>
+    `;
+  } else {
+    box.innerHTML = `
+      <div class="profile-mini">
+        <div class="avatar">${escapeHtml((cur.displayName||cur.username).slice(0,1).toUpperCase())}</div>
+        <div>
+          <div style="font-weight:700;color:#fff;">${escapeHtml(cur.displayName||cur.username)}</div>
+          <div class="small">${escapeHtml(cur.bio||'—')}</div>
+        </div>
+      </div>
+      <div style="height:12px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="navTo('profile','${cur.username}')">Профиль</button>
+        <button class="btn primary" onclick="openEditor()">+ Новость</button>
+      </div>
+    `;
+  }
+}
+
+function renderPosts(){
+  const tpl = document.getElementById('postsView').content.cloneNode(true);
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  content.appendChild(tpl);
+
+  const posts = loadPosts().slice().sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+  // filter & search
+  const q = document.getElementById('searchInput')?.value?.trim().toLowerCase() || '';
+  const filter = document.getElementById('filterAuthor')?.value || '';
+  const filtered = posts.filter(p => {
+    if(filter && p.author !== filter) return false;
+    if(!q) return true;
+    return (p.title||'').toLowerCase().includes(q) || (p.author||'').toLowerCase().includes(q) || (p.content||'').toLowerCase().includes(q);
+  });
+
+  document.getElementById('postsCount').textContent = `${filtered.length} публикаций`;
+
+  const grid = document.getElementById('postsGrid');
+  grid.innerHTML = '';
+  if(filtered.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:20px;background:rgba(255,255,255,0.02);border-radius:10px;text-align:center;color:var(--muted)">Пока нет подходящих публикаций.</div>';
+    return;
+  }
+
+  filtered.forEach(p => {
+    const author = findUser(p.author);
+    const card = document.createElement('article');
+    card.className = 'card';
+    const preview = (p.content || '').replace(/\n/g,' ').slice(0,260) + (p.content.length>260 ? '…' : '');
+    card.innerHTML = `
+      <h2><a href="#" onclick="navTo('post','${p.id}');return false">${escapeHtml(p.title)}</a></h2>
+      <div class="meta">от <a href="#" onclick="navTo('profile','${p.author}');return false">${escapeHtml(author?.displayName || author?.username || p.author)}</a> · <small>${fmtShort(p.createdAt)}</small></div>
+      <p class="preview">${escapeHtml(preview)}</p>
+      <div class="card-actions">
+        <a class="btn" href="#" onclick="navTo('post','${p.id}');return false">Читать</a>
+        ${currentUser() && currentUser().username === p.author ? `<a class="btn" href="#" onclick="editPost('${p.id}');return false">Редактировать</a><a class="btn danger" href="#" onclick="deletePost('${p.id}');return false">Удалить</a>`: ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  populateAuthorFilter();
+}
+
+/* render single post page */
+function renderPostPage(id){
+  const p = loadPosts().find(x => x.id === id);
+  if(!p){ alert('Публикация не найдена'); navTo('home'); return; }
+  const tpl = document.getElementById('postPage').content.cloneNode(true);
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  content.appendChild(tpl);
+
+  document.getElementById('postTitle').textContent = p.title;
+  document.getElementById('postAvatar').textContent = (findUser(p.author)?.displayName || p.author || 'U').slice(0,1).toUpperCase();
+  document.getElementById('postMeta').innerHTML = `Автор: <a href="#" onclick="navTo('profile','${p.author}');return false">${escapeHtml(findUser(p.author)?.displayName || p.author)}</a>`;
+  document.getElementById('postTime').textContent = fmtShort(p.createdAt);
+  document.getElementById('postContent').innerHTML = mdToHtml(p.content);
+
+  const ctr = document.getElementById('postControls');
+  ctr.innerHTML = '';
+  const cur = currentUser();
+  if(cur && cur.username === p.author){
+    const editBtn = document.createElement('button'); editBtn.className='btn'; editBtn.textContent='Редактировать'; editBtn.onclick = ()=> editPost(id);
+    const delBtn = document.createElement('button'); delBtn.className='btn danger'; delBtn.textContent='Удалить'; delBtn.onclick = ()=> deletePost(id);
+    ctr.appendChild(editBtn); ctr.appendChild(delBtn);
+  } else {
+    ctr.innerHTML = `<div class="muted">Только автор может редактировать или удалять запись.</div>`;
+  }
+}
+
+/* profile page */
+function renderProfile(username){
+  const user = findUser(username);
+  if(!user){ alert('Пользователь не найден'); navTo('home'); return; }
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
+      <div class="avatar" style="width:84px;height:84px;border-radius:12px;font-size:26px;">${escapeHtml((user.displayName||user.username).slice(0,1).toUpperCase())}</div>
+      <div style="flex:1;">
+        <h2 style="margin:0;color:#fff;">${escapeHtml(user.displayName || user.username)}</h2>
+        <div class="small" style="margin-top:6px;">@${escapeHtml(user.username)} · зарегистрирован ${fmtShort(user.createdAt)}</div>
+        <div style="height:12px;"></div>
+        <div style="color:#dff8f0;">${escapeHtml(user.bio || 'Пользователь ничего не написал о себе.')}</div>
+      </div>
+    </div>
+    <div style="height:12px;"></div>
+    <h3 style="margin-top:0;color:#fff;">Публикации автора</h3>
+  `;
+
+  const posts = loadPosts().filter(p => p.author === user.username).sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+  if(posts.length === 0){
+    content.innerHTML += `<div class="muted">У пользователя пока нет публикаций.</div>`;
+  } else {
+    const grid = document.createElement('section');
+    grid.className = 'posts';
+    posts.forEach(p => {
+      const card = document.createElement('article'); card.className='card';
+      const preview = (p.content || '').replace(/\n/g,' ').slice(0,260) + (p.content.length>260 ? '…' : '');
+      card.innerHTML = `
+        <h2><a href="#" onclick="navTo('post','${p.id}');return false">${escapeHtml(p.title)}</a></h2>
+        <div class="meta"><small>${fmtShort(p.createdAt)}</small></div>
+        <p class="preview">${escapeHtml(preview)}</p>
+        <div class="card-actions">
+          <a class="btn" href="#" onclick="navTo('post','${p.id}');return false">Читать</a>
+          ${currentUser() && currentUser().username === p.author ? `<a class="btn" href="#" onclick="editPost('${p.id}');return false">Редактировать</a><a class="btn danger" href="#" onclick="deletePost('${p.id}');return false">Удалить</a>`: ''}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    content.appendChild(grid);
+  }
+}
+
+/* ---------- Navigation / actions ---------- */
+function navTo(page, id){
+  if(page === 'home') renderPosts();
+  else if(page === 'post') renderPostPage(id);
+  else if(page === 'profile') renderProfile(id);
+}
+
+/* ---------- Auth modal / forms (simple inline) ---------- */
+function openAuth(mode){
+  // mode: 'login' or 'register'
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const tpl = document.getElementById('authBox').content.cloneNode(true);
+  content.appendChild(tpl);
+  const inner = document.getElementById('authInner');
+
+  if(mode === 'login'){
+    inner.innerHTML = `
+      <h3 style="margin-top:0;">Вход</h3>
+      <div id="authMsg"></div>
+      <label>Имя пользователя<input id="loginUsername" type="text" /></label>
+      <label>Пароль<input id="loginPassword" type="password" /></label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn primary" onclick="doLogin()">Войти</button>
+        <button class="btn" onclick="openAuth('register')">Создать аккаунт</button>
+        <div class="spacer"></div>
+        <div class="muted">Нет аккаунта? <a class="link" href="#" onclick="openAuth('register');return false">Зарегистрироваться</a></div>
+      </div>
+    `;
+  } else {
+    inner.innerHTML = `
+      <h3 style="margin-top:0;">Регистрация</h3>
+      <div id="authMsg"></div>
+      <label>Имя пользователя<input id="regUsername" type="text" /></label>
+      <label>Отображаемое имя (необязательно)<input id="regDisplay" type="text" /></label>
+      <label>Пароль<input id="regPassword" type="password" /></label>
+      <label>Коротко о себе (bio)<input id="regBio" type="text" /></label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn primary" onclick="doRegister()">Создать аккаунт</button>
+        <button class="btn" onclick="openAuth('login')">Уже есть аккаунт</button>
+        <div class="spacer"></div>
+      </div>
+    `;
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function doRegister(){
+  const u = document.getElementById('regUsername').value.trim();
+  const d = document.getElementById('regDisplay').value.trim();
+  const p = document.getElementById('regPassword').value;
+  const bio = document.getElementById('regBio').value.trim();
+  const msg = document.getElementById('authMsg');
+
+  if(!u || !p){ msg.innerHTML = `<div class="msg error">Заполните имя пользователя и пароль.</div>`; return; }
+
+  const users = loadUsers();
+  if(users.some(x=> x.username.toLowerCase() === u.toLowerCase())){ msg.innerHTML = `<div class="msg error">Пользователь с таким именем уже существует.</div>`; return; }
+
+  const hash = await hashStr(p);
+  const user = { id: uid(), username: u, displayName: d || u, passwordHash: hash, bio: bio || '', createdAt: nowISO() };
+  users.push(user); saveUsers(users);
+  setCurrentUser(user.username);
+  msg.innerHTML = `<div class="msg ok">Аккаунт создан. Вы вошли как ${escapeHtml(user.displayName)}</div>`;
+  renderAll();
+  setTimeout(()=> navTo('profile', user.username), 800);
+}
+
+async function doLogin(){
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value;
+  const msg = document.getElementById('authMsg');
+
+  if(!u || !p){ msg.innerHTML = `<div class="msg error">Заполните поля.</div>`; return; }
+  const users = loadUsers();
+  const user = users.find(x => x.username === u);
+  if(!user){ msg.innerHTML = `<div class="msg error">Пользователь не найден.</div>`; return; }
+  const hash = await hashStr(p);
+  if(hash !== user.passwordHash){ msg.innerHTML = `<div class="msg error">Неверный пароль.</div>`; return; }
+  setCurrentUser(user.username);
+  msg.innerHTML = `<div class="msg ok">Вход выполнен. Привет, ${escapeHtml(user.displayName||user.username)}.</div>`;
+  renderAll();
+  setTimeout(()=> navTo('home'), 600);
+}
+
+function logout(){ setCurrentUser(null); renderAll(); }
+
+/* ---------- Editor (new/edit) ---------- */
+let editingId = null;
+function openEditor(){
+  const cur = currentUser();
+  if(!cur){ openAuth('login'); return; }
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const tpl = document.getElementById('editorTemplate').content.cloneNode(true);
+  content.appendChild(tpl);
+  document.getElementById('editorMsg').textContent = '';
+  editingId = null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeEditor(){ navTo('home'); }
+
+function editPost(id){
+  const p = loadPosts().find(x => x.id === id);
+  if(!p){ alert('Публикация не найдена'); return; }
+  const cur = currentUser();
+  if(!cur || cur.username !== p.author){ alert('Только автор может редактировать запись'); return; }
+  editingId = id;
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const tpl = document.getElementById('editorTemplate').content.cloneNode(true);
+  content.appendChild(tpl);
+  document.getElementById('postTitleInput').value = p.title;
+  document.getElementById('postContentInput').value = p.content;
+  document.getElementById('editorTitle').textContent = 'Редактирование публикации';
+  document.getElementById('savePostBtn').textContent = 'Сохранить';
+  document.getElementById('editorMsg').textContent = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('click', function(e){
+  if(e.target && e.target.id === 'savePostBtn'){
+    (async ()=>{
+      const title = document.getElementById('postTitleInput').value.trim();
+      const content = document.getElementById('postContentInput').value.trim();
+      const msg = document.getElementById('editorMsg');
+      if(!title || !content){ msg.textContent = 'Заполните заголовок и контент.'; msg.className='muted'; return; }
+      const posts = loadPosts();
+      if(editingId){
+        const idx = posts.findIndex(x=>x.id===editingId);
+        if(idx === -1){ alert('Ошибка: публикация не найдена'); return; }
+        posts[idx].title = title;
+        posts[idx].content = content;
+        posts[idx].updatedAt = nowISO();
+        savePosts(posts);
+        editingId = null;
+        renderAll();
+        navTo('post', posts[idx].id);
+      } else {
+        const cur = currentUser();
+        if(!cur){ openAuth('login'); return; }
+        const newPost = { id: uid(), title, content, author: cur.username, createdAt: nowISO(), updatedAt:null };
+        posts.push(newPost);
+        savePosts(posts);
+        renderAll();
+        navTo('post', newPost.id);
+      }
+    })();
+  }
+});
+
+/* ---------- Delete post ---------- */
+function deletePost(id){
+  const posts = loadPosts();
+  const p = posts.find(x=>x.id===id);
+  const cur = currentUser();
+  if(!p){ alert('Публикация не найдена'); return; }
+  if(!cur || cur.username !== p.author){ alert('Только автор может удалять запись'); return; }
+  if(!confirm('Удалить публикацию? Это действие нельзя отменить.')) return;
+  const filtered = posts.filter(x=>x.id!==id);
+  savePosts(filtered);
+  renderAll();
+  navTo('home');
+}
+
+/* ---------- Helpers ---------- */
+function findUser(username){ return loadUsers().find(u => u.username === username) || null; }
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------- Populate author filter ---------- */
+function populateAuthorFilter(){
+  const sel = document.getElementById('filterAuthor');
+  const users = loadUsers();
+  const currentVal = sel?.value || '';
+  sel.innerHTML = '<option value="">Все авторы</option>';
+  users.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.username;
+    opt.textContent = u.displayName || u.username;
+    sel.appendChild(opt);
+  });
+  if(currentVal) sel.value = currentVal;
+}
+
+/* ---------- Initial render ---------- */
+renderAll();
+
+/* ---------- Expose global functions for inline handlers ---------- */
+window.openAuth = openAuth;
+window.openEditor = openEditor;
+window.navTo = navTo;
+window.editPost = editPost;
+window.deletePost = deletePost;
+window.doRegister = doRegister;
+window.doLogin = doLogin;
+window.logout = logout;
+
+</script>
+</body>
+</html>
